@@ -62,10 +62,17 @@ def ngram(sequences, title, n, max_ngrams = 50, hex_code="#DDFFDD"):
     n_sequences = np.shape(sequences)[0]
 
     all_ngrams = []
+
+    for i in range( np.shape(sequences)[0]):
+        for j in range( np.shape(sequences)[1]):
+            sequences[i,j] = int(sequences[i,j])
+
     
     for i in range(n_sequences):
         # Generate n-grams for each sequence
         sequence_ngrams = list(ngrams(sequences[i], n))
+        sequence_ngrams = [tuple(int(x) for x in ngram) for ngram in sequence_ngrams]
+
         # Filter out n-grams that contain a negative value
         filtered_ngrams = [ngram for ngram in sequence_ngrams if all(x >= 0 for x in ngram)]
         all_ngrams.extend(filtered_ngrams)
@@ -87,7 +94,7 @@ def ngram(sequences, title, n, max_ngrams = 50, hex_code="#DDFFDD"):
     
     # Plot histogram
     ax.bar(range(len(ngrams_list)), counts, edgecolor="black", color= hex_code)
-
+    
     # Configure x-ticks to show n-grams
     ax.set_xticks(range(len(ngrams_list)))
     ax.set_xticklabels([f"{'-'.join(map(str, ngram))}" for ngram in ngrams_list], rotation=90)
