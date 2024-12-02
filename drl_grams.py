@@ -113,3 +113,35 @@ def ngram(sequences, title, n, max_ngrams = 50, hex_code="#DDFFDD"):
     ax.set_ylabel("%")
     plt.tight_layout()
     plt.show()
+
+def plot_contour(sequences, title="Contour Plot", xlabel="Time Step", ylabel="Action Number"):
+    """
+    Plots a contour plot for the given sequences.
+    
+    Parameters:
+    - sequences: 2D numpy array where rows represent sequences and columns represent time steps.
+    - title: Title of the plot.
+    - xlabel: Label for the x-axis.
+    - ylabel: Label for the y-axis.
+    """
+    n_sequences, max_time_step = sequences.shape
+    action_counts = np.zeros((int(np.max(sequences)), max_time_step))
+
+    for i in range(n_sequences):
+        for time_step in range(max_time_step):
+            action = sequences[i, time_step]
+            for action_index in range(int(np.max(sequences))):
+                if action == action_index:  
+                    action_counts[action_index, time_step] += 1
+
+    plt.figure(figsize=(10, 6))
+    X, Y = np.meshgrid(range(max_time_step), range(action_counts.shape[0]))
+    Z = action_counts
+
+    contour = plt.contourf(X, Y, Z, cmap='viridis')
+    plt.colorbar(contour)
+    plt.grid(True)
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.show()
