@@ -235,10 +235,10 @@ def calc_ipr(state):
     float: The calculated IPR value.
     """
     nh = np.shape(state)[0]
-    ipr = 0
+    inv_ipr = 0
     for i in range(nh):
-        ipr += np.real(state[i]*np.conjugate(state[i]))**2
-    return ipr
+        inv_ipr += np.real(state[i]*np.conjugate(state[i]))**2
+    return 1/inv_ipr
 
 def calc_localization(state):
     """
@@ -279,7 +279,7 @@ def plot_single_sequence(action_sequence,nh,dt=0.15,b=100,label='',actions = 'or
     
     # generar propagadores
     actions = action_selector(actions,b,nh)
-    propagators = gen_props(actions, nh, b, dt)
+    propagators = gen_props(actions, nh, dt)
     times = np.arange(0,t_steps,1)
 
     # definicion del estado inicial e inicializacion de estados forzado y natural
@@ -316,8 +316,9 @@ def plot_single_sequence(action_sequence,nh,dt=0.15,b=100,label='',actions = 'or
         forced_evol.append(state_fidelity(forced_state))
 
     max_forced = np.max(forced_evol)
+    max_time = np.argmax(forced_evol)
 
-    plt.plot(times,forced_evol,'-o', label = label + '. Máx.: {}'.format(max_forced))
+    plt.plot(times,forced_evol,'-o', label = label + '. Máx.: {:.5f} at step {}'.format(max_forced,max_time))
 
     plt.legend(loc='upper left')
     #plt.show()
@@ -332,7 +333,7 @@ def plot_exp_value(action_sequence,nh,dt=0.15,b=100,label='',actions = 'original
     
     # generar propagadores
     actions = action_selector(actions,b,nh)
-    propagators = gen_props(actions, nh, b, dt)
+    propagators = gen_props(actions, nh, dt)
     times = np.arange(0,t_steps,1)
 
     # definicion del estado inicial e inicializacion de estados forzado y natural
@@ -379,7 +380,7 @@ def plot_ipr(action_sequence,nh,dt=0.15,b=100,label='',actions = 'original',add_
     
     # generar propagadores
     actions = action_selector(actions,b,nh)        
-    propagators = gen_props(actions, nh, b, dt)
+    propagators = gen_props(actions, nh, dt)
     times = np.arange(0,t_steps,1)
 
     # definicion del estado inicial e inicializacion de estados forzado y natural
@@ -426,7 +427,7 @@ def plot_localization(action_sequence,nh,dt=0.15,b=100,label='',actions = 'origi
     
     # generar propagadores
     actions = action_selector(actions,b,nh)
-    propagators = gen_props(actions, nh, b, dt)
+    propagators = gen_props(actions, nh, dt)
     times = np.arange(0,t_steps,1)
 
     # definicion del estado inicial e inicializacion de estados forzado y natural
@@ -477,7 +478,7 @@ def plot_all_metrics(action_sequence, nh, dt=0.15, b=100, label='', actions='ori
     
     # Generar propagadores
     actions = action_selector(actions,b,nh)
-    propagators = gen_props(actions, nh, b, dt)
+    propagators = gen_props(actions, nh, dt)
     
     # Inicializar estado inicial
     initial_state = np.zeros(nh, dtype=np.complex_)
@@ -556,7 +557,7 @@ def plot_all_metrics(action_sequence, nh, dt=0.15, b=100, label='', actions='ori
         
         # generar propagadores
         actions = action_selector('original',b,nh)
-        propagators = gen_props(actions, nh, b, dt)
+        propagators = gen_props(actions, nh, dt)
         
         for action in action_sequence:
             free_state = calculate_next_state(free_state, 0, propagators)
@@ -575,7 +576,7 @@ def find_max(action_sequences,nh, b=100, dt = 0.15, actions = 'original'):
 
     # generar propagadores
     actions = action_selector(actions,b,nh)
-    propagators = gen_props(actions, nh, b, dt)
+    propagators = gen_props(actions, nh, dt)
 
     for i in range(np.shape(action_sequences)[0]):
         action_sequence = action_sequences[i][:]
