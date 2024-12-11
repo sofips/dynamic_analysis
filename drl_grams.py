@@ -78,6 +78,19 @@ def uniformize_data(used_algorithm, **kwargs):
 
 
 def ngram(sequences, title, n, max_ngrams=50, hex_code="#DDFFDD"):
+    """
+    Generate and plot a histogram of n-gram frequencies from a given set of pulse sequences.
+
+    Parameters:
+    sequences (np.ndarray): A 2D numpy array where each row represents a sequence of actions.
+    title (str): The title of the plot.
+    n (int): The length of the n-grams to generate.
+    max_ngrams (int, optional): The maximum number of most common n-grams to display in the histogram. Default is 50.
+    hex_code (str, optional): The hex color code for the bars in the histogram. Default is "#DDFFDD".
+
+    Returns:
+    None
+    """
 
     n_sequences = np.shape(sequences)[0]
 
@@ -142,10 +155,10 @@ def plot_contour(
     sequences, title="Contour Plot", xlabel="Time Step", ylabel="Action Number"
 ):
     """
-    Plots a contour plot for the given sequences.
+    Plots a contour plot for a given set of action sequences.
 
     Parameters:
-    - sequences: 2D numpy array where rows represent sequences and columns represent time steps.
+    - sequences: 2D numpy array where rows represent action sequences and columns represent time steps.
     - title: Title of the plot.
     - xlabel: Label for the x-axis.
     - ylabel: Label for the y-axis.
@@ -175,15 +188,52 @@ def plot_contour(
 # calculation of state properties 
 
 def state_fidelity(state):
+    """
+    Calculate the fidelity of a given quantum state.
+
+    The fidelity is computed as the real part of the product of the last element
+    of the state vector and its complex conjugate.
+
+    Parameters:
+    state (numpy.ndarray): A complex numpy array representing the quantum state.
+
+    Returns:
+    float: The fidelity of the quantum state.
+    """
     nh = np.shape(state)[0]
     fid = np.real(state[nh - 1] * np.conjugate(state[nh - 1]))
     return fid
 
 def calc_exp_value(state, op):
+    """
+    Calculate the expected value of an operator given a quantum state.
+
+    This function computes the expected value (or expectation value) of a given
+    operator with respect to a provided quantum state. The expected value is 
+    calculated using the formula: ⟨state|op|state⟩.
+
+    Parameters:
+    state (numpy.ndarray): A complex vector representing the quantum state.
+    op (numpy.ndarray): A complex matrix representing the operator.
+
+    Returns:
+    float: The real part of the expected value of the operator.
+    """
     val = np.matmul(np.conjugate(np.transpose(state)),np.matmul(op, state))
     return np.real(val)
 
 def calc_ipr(state):
+    """
+    Calculate the Inverse Participation Ratio (IPR) of a given state.
+
+    The IPR is a measure of the localization of a state. It is calculated as the sum of the squared magnitudes of the state's components.
+
+    Parameters:
+    state (numpy.ndarray): A complex-valued numpy array representing the state vector.
+
+    Returns:
+    float: The calculated IPR value.
+    """
     nh = np.shape(state)[0]
     ipr = 0
     for i in range(nh):
@@ -191,6 +241,18 @@ def calc_ipr(state):
     return ipr
 
 def calc_localization(state):
+    """
+    Calculate the localization of a given quantum state.
+
+    The localization is computed as the sum of the squared magnitudes of the 
+    state's components, weighted by their position index.
+
+    Parameters:
+    state (numpy.ndarray): A 1D array representing the quantum state.
+
+    Returns:
+    float: The calculated localization value.
+    """
     nh = np.shape(state)[0]
     loc = 0
     for i in range(nh):
